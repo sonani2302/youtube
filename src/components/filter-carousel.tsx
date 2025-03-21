@@ -9,7 +9,7 @@ import { Skeleton } from "./ui/skeleton";
 interface FilterCarouselProps {
     value?: string | null;
     isLoading?: boolean;
-    onSelect?: (values: string | null) => void;
+    onSelect: (values: string | null) => void;
     data: {
         value: string;
         label: string;
@@ -55,14 +55,18 @@ export const FilterCarousel = ({
                 className="w-full px-12"
             >
                 <CarouselContent className="-ml-3">
-                    {isLoading && <CarouselItem className="pl-3 basis-auto">
-                        <Badge
-                            variant={!value ? "default": "secondary"}
-                            className="rounded-lg px-3 py-1 cursor-pointer"
+                    {!isLoading && (
+                        <CarouselItem 
+                            className="pl-3 basis-auto"
+                            onClick={() => onSelect(null)}
                         >
+                                <Badge
+                                    variant={!value ? "default": "secondary"}
+                                    className="rounded-lg px-3 py-1 cursor-pointer"
+                                >
                             All
                         </Badge>
-                    </CarouselItem>}
+                    </CarouselItem>)}
                     {isLoading && 
                         Array.from({ length: 14}).map((_, index)=>(
                             <CarouselItem key={index} className="pl-3 basis-auto">
@@ -73,13 +77,16 @@ export const FilterCarousel = ({
                         ))
                     }
                     {!isLoading && data.map((item)=>(
-                        <CarouselItem key={item.value} className="pl-3 basis-auto">
-                            <Badge
-                                variant={value === item.value ? "default": "secondary"}
-                                 className="rounded-lg px-3 py-1 cursor-pointer"
-                            >
-                                {item.label}
-                            </Badge>
+                        <CarouselItem 
+                            key={item.value} 
+                            className="pl-3 basis-auto" 
+                            onClick={() => onSelect(item.value)}>
+                                <Badge
+                                    variant={value === item.value ? "default": "secondary"}
+                                    className="rounded-lg px-3 py-1 cursor-pointer"
+                                >
+                                    {item.label}
+                                </Badge>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
