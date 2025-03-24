@@ -7,6 +7,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
+import VideoThubnail from "@/modules/videos/ui/components/video-thumbnail";
 
 export const VideosSection = () => {
     return(<>
@@ -46,7 +47,18 @@ export const VideosSectionSuspense = () => {
                         {videos.pages.flatMap((page) => page.items).map((video) => (
                             <Link href={`/studio/videos/${video.id}`} key={video.id} legacyBehavior>
                                 <TableRow className="cursor-pointer" >
-                                    <TableCell>{video.title}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative aspect-video w-36 shrink-0">
+                                                <VideoThubnail 
+                                                    imageUrl={video.thumbnailUrl} 
+                                                    previewUrl={video.previewUrl} 
+                                                    title={video.title} 
+                                                    duration={video.duration || 0}
+                                                />
+                                            </div>
+                                        </div>
+                                    </TableCell>
                                     <TableCell>Visibility</TableCell>
                                     <TableCell>Status</TableCell>
                                     <TableCell>Date</TableCell>
