@@ -8,7 +8,8 @@ import {
     VideoAssetCreatedWebhookEvent,
     VideoAssetErroredWebhookEvent,
     VideoAssetReadyWebhookEvent,
-    VideoAssetTrackReadyWebhookEvent
+    VideoAssetTrackReadyWebhookEvent,
+    VideoAssetDeletedWebhookEvent
 } from '@mux/mux-node/resources/webhooks'
 
 
@@ -18,7 +19,8 @@ type WebhookEvent =
     | VideoAssetCreatedWebhookEvent 
     | VideoAssetErroredWebhookEvent 
     | VideoAssetReadyWebhookEvent 
-    | VideoAssetTrackReadyWebhookEvent;
+    | VideoAssetTrackReadyWebhookEvent
+    | VideoAssetDeletedWebhookEvent;
 
 export const POST = async (request: Request) => {
     
@@ -56,6 +58,8 @@ export const POST = async (request: Request) => {
                 muxStatus: data.status,
                 muxUploadId: data.upload_id
             });
+
+            console.log("Creating video with id:", { uploadId: data.upload_id } )
 
             await db
                 .update(videos)
@@ -95,6 +99,39 @@ export const POST = async (request: Request) => {
                     duration
                 })
                 .where(eq(videos.muxUploadId, data.upload_id))
+
+            break;
+        }
+
+        case "video.asset.errored": {
+            const data = payload.data as VideoAssetErroredWebhookEvent["data"];
+
+            if(!data.upload_id) {
+                return new Response("Missing upload ID", { status: 400 })
+            }
+
+            await db
+                .update(videos)
+                .set({
+                    muxStatus: data.status,
+                })
+                .where(eq(videos.muxUploadId, data.upload_id));
+
+            break;
+        };
+
+        case "video.asset.deleted": {
+            const data = payload.data as VideoAssetDeletedWebhookEvent["data"];
+
+            if(!data.upload_id) {
+                return new Response("Missing upload ID", { status: 400 })
+            }
+
+            console.log("deleting video with id:", { uploadId: data.upload_id } )
+
+            await db
+                .delete(videos)
+                .where(eq(videos.muxUploadId, data.upload_id));
 
             break;
         }
