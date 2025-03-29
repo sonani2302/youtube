@@ -1,0 +1,1 @@
+export const THUNBNAIL_FALLBACK ="/placeholder.svg"
