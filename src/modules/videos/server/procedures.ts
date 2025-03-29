@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { and, eq } from "drizzle-orm";
+import { UTApi } from 'uploadthing/server';
 
 
 import { db } from "@/db";
@@ -7,7 +8,6 @@ import { mux } from "@/lib/mux";
 import { TRPCError } from "@trpc/server";
 import { videos, videoUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { UTApi } from 'uploadthing/server';
 
 export const videosRouter = createTRPCRouter({
     restoreThubnail: protectedProcedure
@@ -29,30 +29,42 @@ export const videosRouter = createTRPCRouter({
 
             if(existingVideo.thumbnailKey) {
                 const utapi = new UTApi();
-        
-                await utapi.deleteFiles(existingVideo.thumbnailKey);
+                
+                const response = await utapi.deleteFiles(existingVideo.thumbnailKey);
+                console.log(response);
                 await db
-                  .update(videos)
-                  .set({ thumbnailKey: null, thumbnailUrl: null})
-                  .where(and(
+                .update(videos)
+                .set({ thumbnailKey: null, thumbnailUrl: null})
+                .where(and(
                     eq(videos.id, input.id),
                     eq(videos.userId, userId)
-                  ))
+                ))
             }
+            console.log("Restoring - point3")
 
             if(!existingVideo.muxPlaybackId) {
-                throw new TRPCError({ code: "BAD_REQUEST" })
+                throw new TRPCError({ code: "BAD_REQUEST" });
             }
-            const thumbnailUrl = `https://image.mux.com/${existingVideo.muxPlaybackId}/thumbnail.jpg`;
+            
+            const utapi = new UTApi();
+            
+            const tempThumbnailUrl = `https://image.mux.com/${existingVideo.muxPlaybackId}/thumbnail.jpg`;
+            const uploadedThumbnail = await utapi.uploadFilesFromUrl(tempThumbnailUrl);
+            
+            if(!uploadedThumbnail.data){
+                throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+            }
+
+            const {key: thumbnailKey, url: thumbnailUrl} = uploadedThumbnail.data;
 
             const [updatedVideo] = await db
                 .update(videos)
-                .set({ thumbnailUrl})
+                .set({ thumbnailKey, thumbnailUrl})
                 .where(and( 
                     eq(videos.id, input.id),
                     eq(videos.userId, userId)
                 ))
-                .returning()
+                .returning();
 
             return updatedVideo;
 

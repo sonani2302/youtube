@@ -45,10 +45,13 @@ export const ourFileRouter = {
         throw new UploadThingError("Not found"); 
       }
 
+      console.log(" Middleware point - 0", existingVideo);
       if(existingVideo.thumbnailKey) {
+        console.log(" Middleware point - 1")
         const utapi = new UTApi();
 
-        await utapi.deleteFiles(existingVideo.thumbnailKey);
+        const response = await utapi.deleteFiles(existingVideo.thumbnailKey);
+        console.log(" Middleware point - 2 resposne", response);
         await db
           .update(videos)
           .set({ thumbnailKey: null, thumbnailUrl: null})
@@ -56,6 +59,8 @@ export const ourFileRouter = {
             eq(videos.id, input.videoId),
             eq(videos.userId, user.id)
           ))
+      } else {
+        console.log(" Middleware point - 2")
       }
 
       return { user, ...input };

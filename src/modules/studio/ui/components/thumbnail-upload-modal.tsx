@@ -1,6 +1,6 @@
-import { ResponsiveModal } from "@/components/responsive-modal";
-import { UploadDropzone } from "@/lib/uploadthing";
 import { trpc } from "@/trpc/client";
+import { UploadDropzone } from "@/lib/uploadthing";
+import { ResponsiveModal } from "@/components/responsive-modal";
 
 interface ThumbnailUploadModalProps {
     videoId: string;
@@ -23,7 +23,7 @@ export const ThumbnailUploadModal = ({
 
     return (<>
         <ResponsiveModal
-            title="uplaod a thunbnail"
+            title="uplaod a thumbnail"
             open={open}
             onOpenChange={onOpenChange}
 
