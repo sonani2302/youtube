@@ -8,9 +8,21 @@ import { mux } from "@/lib/mux";
 import { TRPCError } from "@trpc/server";
 import { videos, videoUpdateSchema } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { workflow } from '@/lib/workflows';
 
 export const videosRouter = createTRPCRouter({
-    restoreThubnail: protectedProcedure
+    generateThumbnail: protectedProcedure
+        .input(z.object({ id: z.string().uuid() }))
+        .mutation(async ({ ctx, input }) => {
+            const { id: userId } = ctx.user;
+            const { workflowRunId } = await workflow.trigger({
+                url: `${process.env.UPSTASH_WORKFLOW_URL}/api/videos/webhook/workflows/title`,
+                body: { userId, videoId: input.id },
+            });
+
+            return workflowRunId;
+        }),
+    restoreThumbnail: protectedProcedure
         .input(z.object({id: z.string().uuid()}))
         .mutation(async ({ ctx, input }) => {
             const {id: userId} = ctx.user;
