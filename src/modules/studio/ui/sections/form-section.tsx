@@ -96,6 +96,16 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
         }
     });
     
+    const generateTitle = trpc.videos.generateThumbnail.useMutation({
+        onSuccess: () => {
+            toast.success("Background Jobs started", { description: "This may take some time" });
+        },
+        onError: (error) => {
+            toast.error("Something went wrong while creating");
+            console.log("error", error);
+        }
+    });
+    
     const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
         onSuccess: () => {
             toast.success("Background Jobs started", { description: "This may take some time" });
