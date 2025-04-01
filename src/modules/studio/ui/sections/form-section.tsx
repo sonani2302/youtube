@@ -43,6 +43,7 @@ import { videoUpdateSchema } from '@/db/schema';
 import { THUNBNAIL_FALLBACK } from '@/modules/videos/constant';
 import { VideoPlayer } from '@/modules/videos/ui/components/video-player';
 import { ThumbnailUploadModal } from '../components/thumbnail-upload-modal';
+import { ThumbnailGenerateModal } from '../components/thumbnail-generate-modal';
 
 interface FormSectionProps {
     videoId: string;
@@ -69,6 +70,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     const utills = trpc.useUtils();
 
     const [thumbnailModalOpen, setThumbnailModalOpen] = useState(false);
+    const [thumbnailGenerateModalOpen, setThumbnailGenerateModalOpen] = useState(false);
 
     const [video] = trpc.studio.getOne.useSuspenseQuery({ id: videoId });
     const [categories] = trpc.categories.getMany.useSuspenseQuery();
@@ -116,16 +118,6 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
         }
     });
     
-    const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
-        onSuccess: () => {
-            toast.success("Background Jobs started", { description: "This may take some time" });
-        },
-        onError: (error) => {
-            toast.error("Something went wrong while creating");
-            console.log("error", error);
-        }
-    });
-
     const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
         onSuccess: () => {
             utills.studio.getMany.invalidate();
@@ -160,6 +152,12 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     }
 
     return(<>
+        <ThumbnailGenerateModal 
+            open={thumbnailGenerateModalOpen}
+            onOpenChange={setThumbnailGenerateModalOpen}
+            videoId={videoId}
+        />
+        
         <ThumbnailUploadModal 
             open={thumbnailModalOpen}
             onOpenChange={setThumbnailModalOpen}
@@ -299,7 +297,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                                         Change 
                                                     </DropdownMenuItem>
 
-                                                    <DropdownMenuItem onClick={() => {generateThumbnail.mutate({ id: videoId })}}>
+                                                    <DropdownMenuItem onClick={() => {setThumbnailGenerateModalOpen(true)}}>
                                                         <SparkleIcon className="size-4 mr-1" />
                                                         AI-generated 
                                                     </DropdownMenuItem>
