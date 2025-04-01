@@ -5,7 +5,7 @@ import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ErrorBoundary } from "react-error-boundary";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CopyCheckIcon, CopyIcon, Globe2Icon, ImagePlusIcon, LockIcon, MoreVerticalIcon, RotateCcwIcon, SparkleIcon, TrashIcon } from "lucide-react";
+import { CopyCheckIcon, CopyIcon, Globe2Icon, ImagePlusIcon, Loader2Icon, LockIcon, MoreVerticalIcon, RotateCcwIcon, SparkleIcon, TrashIcon } from "lucide-react";
 
 import { trpc } from "@/trpc/client";
 import { Input } from "@/components/ui/input";
@@ -96,7 +96,17 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
         }
     });
     
-    const generateTitle = trpc.videos.generateThumbnail.useMutation({
+    const generateDescription = trpc.videos.generateDescription.useMutation({
+        onSuccess: () => {
+            toast.success("Background Jobs started", { description: "This may take some time" });
+        },
+        onError: (error) => {
+            toast.error("Something went wrong while creating");
+            console.log("error", error);
+        }
+    });
+
+    const generateTitle = trpc.videos.generateTitle.useMutation({
         onSuccess: () => {
             toast.success("Background Jobs started", { description: "This may take some time" });
         },
@@ -192,8 +202,22 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Title
-                                        {/* Add AI generate Title */}
+                                        <div className='flex items-center gap-x-2'>
+                                            Title
+                                            <Button 
+                                                size="icon"
+                                                variant={"outline"}
+                                                type="button"
+                                                className="rounded-full size-6 [&_svg]:size:3"
+                                                onClick={() => {generateTitle.mutate({ id: videoId })}}
+                                                disabled={generateTitle.isPending}
+                                            >
+                                                { generateTitle.isPending
+                                                    ? <Loader2Icon className="animate-spin" />
+                                                    : <SparkleIcon />
+                                                }
+                                            </Button>
+                                        </div>
                                     </FormLabel>
 
                                     <FormControl>
@@ -213,8 +237,22 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Description
-                                        {/* Add AI generate Description */}
+                                        <div className='flex items-center gap-x-2'>
+                                            Description
+                                            <Button 
+                                                size="icon"
+                                                variant={"outline"}
+                                                type="button"
+                                                className="rounded-full size-6 [&_svg]:size:3"
+                                                onClick={() => {generateDescription.mutate({ id: videoId })}}
+                                                disabled={generateDescription.isPending}
+                                            >
+                                                { generateDescription.isPending
+                                                    ? <Loader2Icon className="animate-spin" />
+                                                    : <SparkleIcon />
+                                                }
+                                            </Button>
+                                        </div>
                                     </FormLabel>
 
                                     <FormControl>
