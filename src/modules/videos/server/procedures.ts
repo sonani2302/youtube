@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { mux } from "@/lib/mux";
 import { TRPCError } from "@trpc/server";
 import { workflow } from '@/lib/workflows';
-import { users, videos, videoUpdateSchema } from "@/db/schema";
+import { users, videos, videoUpdateSchema, videoViews } from "@/db/schema";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const videosRouter = createTRPCRouter({
@@ -18,7 +18,8 @@ export const videosRouter = createTRPCRouter({
                     ...getTableColumns(videos),
                     user: {
                         ...getTableColumns(users),
-                    }
+                    },
+                    viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id ))
                 })
                 .from(videos)
                 .innerJoin(users, eq(videos.userId, users.id))
