@@ -17,7 +17,7 @@ export const VideoDescription = ({
     expandDate,
     description
 }: VideoDescriptionProps) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     return(<>
         <div
