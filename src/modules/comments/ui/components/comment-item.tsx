@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
-import { MessageSquareDotIcon, MoreVerticalIcon, Trash2Icon } from "lucide-react";
+import { MessageSquareDotIcon, MoreVerticalIcon, ThumbsDownIcon, ThumbsUpIcon, Trash2Icon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { UserAvtar } from "@/components/user-avtar";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,6 @@ import {
 
 import { CommentsGetManyOutput } from "../../types";
 import { useAuth, useClerk } from "@clerk/nextjs";
-import { toast } from "sonner";
 
 interface CommentItemProps {
     comment: CommentsGetManyOutput["items"][number];
@@ -27,6 +28,7 @@ export const CommentItem = ({
 
     const clerk = useClerk();
     const utils = trpc.useUtils();
+
     const remove = trpc.comments.remove.useMutation({
         onSuccess: () => {
             toast.success("Comment deleted");
@@ -39,6 +41,31 @@ export const CommentItem = ({
             }
         }
 
+    });
+
+    const like = trpc.commentReactions.like.useMutation({
+        onSuccess: () => {
+            toast.success("Comment liked");
+            utils.comments.getMany.invalidate({ videoId: comment.videoId });
+        },
+        onError: (error) => {
+            toast.error("Something went wrong")
+            if(error.data?.code === "UNAUTHORIZED") {
+                clerk.openSignIn();
+            }
+        }
+    });
+    const dislike = trpc.commentReactions.dislike.useMutation({
+        onSuccess: () => {
+            toast.success("Comment disliked");
+            utils.comments.getMany.invalidate({ videoId: comment.videoId });
+        },
+        onError: (error) => {
+            toast.error("Something went wrong")
+            if(error.data?.code === "UNAUTHORIZED") {
+                clerk.openSignIn();
+            }
+        }
     });
 
     return(<>
@@ -65,9 +92,45 @@ export const CommentItem = ({
                         </div>
                     </Link>
                     <p className="text-sm">{comment.value}</p>
-                    {/* Todo: Reactions */}
+                    <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center">
+                            <Button
+                                disabled={like.isPending}
+                                variant={"ghost"}
+                                size={"icon"}
+                                className="size-8"
+                                onClick={() => like.mutate({ commentId: comment.id })}
+                            >
+                                <ThumbsUpIcon 
+                                    className={cn(
+                                        comment.viewerReaction === "like" && "fill-black"
+                                    )}
+                                />
+                            </Button>
+                            <span className="text-xs text-muted-foreground">
+                                {comment.likeCount}
+                            </span>
+
+                            <Button
+                                disabled={dislike.isPending}
+                                variant={"ghost"}
+                                size={"icon"}
+                                className="size-8"
+                                onClick={() => dislike.mutate({ commentId: comment.id })}
+                            >
+                                <ThumbsDownIcon 
+                                    className={cn(
+                                        comment.viewerReaction === "dislike" && "fill-black"
+                                    )}
+                                />
+                            </Button>
+                            <span className="text-xs text-muted-foreground">
+                                {comment.dislikeCount}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <DropdownMenu>
+                <DropdownMenu modal={false}>
                     <DropdownMenuTrigger asChild>
                         <Button variant={"ghost"} size="icon" className="size-8">
                                 <MoreVerticalIcon />
@@ -84,10 +147,6 @@ export const CommentItem = ({
                                 Delete
                             </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => {}}>
-                            <MessageSquareDotIcon className="size-4" />
-                            Reply
-                        </DropdownMenuItem>
                     </DropdownMenuContent>
 
                 </DropdownMenu>
