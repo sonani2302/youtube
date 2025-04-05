@@ -61,7 +61,7 @@ export const studioRouter = createTRPCRouter({
                     )
                 : undefined,
             )).orderBy(desc(videos.updatedAt), desc(videos.id))
-
+            // Add 1 to the limit to check if we there is more data
             .limit(limit + 1)
 
         const hasMore = data.length > limit;
