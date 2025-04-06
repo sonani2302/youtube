@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 
 interface CommentFormProps {
     videoId: string;
-    parentId: string;
+    parentId?: string;
     onSuccess?: () => void;
     onCancel?: () => void;
     variant?: "comment" | "reply",
