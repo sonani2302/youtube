@@ -1,20 +1,29 @@
 import Image from "next/image"
 import { formatDuration } from "@/lib/utils";
 import { THUNBNAIL_FALLBACK } from "../../constant";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface VideoThubnailProps {
+interface VideoThumbnailProps {
   title: string;
   duration: number;
   imageUrl?: string | null;
   previewUrl?: string | null;
 }
 
-const VideoThubnail = ({
+export const VideoThumbnailSkeleton = () => {
+  return(<>
+    <div className="relative w-full overflow-hidden rounded-xl aspect-video">
+      <Skeleton className="size-full" />
+    </div>
+  </>)
+};
+
+export const VideoThumbnail = ({
   title,
   duration,
   imageUrl,
   previewUrl
-}: VideoThubnailProps) => {
+}: VideoThumbnailProps) => {
   return (
     <div className='relative group'>
       {/* Thubmnail wrapper */}
@@ -43,4 +52,3 @@ const VideoThubnail = ({
   )
 }
 
-export default VideoThubnail

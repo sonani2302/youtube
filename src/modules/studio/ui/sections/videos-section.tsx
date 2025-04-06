@@ -1,17 +1,18 @@
 "use client"
 
-import { trpc } from "@/trpc/client";
-import { DEFAULT_LIMIT } from "@/constans";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { InfiniteScroll } from "@/components/infinite-scroll";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
-import VideoThubnail from "@/modules/videos/ui/components/video-thumbnail";
-import { snakeCaseToTitle } from "@/lib/utils";
+import { Suspense } from "react";
 import { format } from "date-fns";
 import { Globe2Icon, LockIcon } from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
+
+import { trpc } from "@/trpc/client";
+import { DEFAULT_LIMIT } from "@/constans";
+import { snakeCaseToTitle } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { InfiniteScroll } from "@/components/infinite-scroll";
+import { VideoThumbnail } from "@/modules/videos/ui/components/video-thumbnail";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const VideosSection = () => {
     return(<>
@@ -115,7 +116,7 @@ export const VideosSectionSuspense = () => {
                                     <TableCell className="pl-6">
                                         <div className="flex items-center gap-4">
                                             <div className="relative aspect-video w-36 shrink-0">
-                                                <VideoThubnail 
+                                                <VideoThumbnail 
                                                     imageUrl={video.thumbnailUrl} 
                                                     previewUrl={video.previewUrl} 
                                                     title={video.title} 
