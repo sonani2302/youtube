@@ -36,7 +36,7 @@ const ResultsSectionSkeleton = () => {
                     <VideoRowCardSkeleton key={index} />
                 ))}
             </div>
-            <div className="flex flex-col gap-4 p-4 gap-y-10 pt-6 md:hidden">
+            <div className="flex flex-col gap-4 p-4 pt-6 md:hidden">
                 {Array.from({ length: 5 }).map((_, index) => (
                     <VideoGridCardSkeleton key={index} />
                 ))}
@@ -49,7 +49,6 @@ const ResultsSectionSuspense = ({
     query,
     categoryId,
 }: ResultsSectionProps) => {
-    const isMobile = useIsMobile();
 
     const [results, resultquery] = trpc.search.getMany.useSuspenseInfiniteQuery({
         query, categoryId, limit: DEFAULT_LIMIT
@@ -58,25 +57,24 @@ const ResultsSectionSuspense = ({
     });
 
     return(<>
-        {isMobile ? (
-            <div className="flex flex-col gap-4 gap-y-10">
-                {results.pages
-                    .flatMap((page) => page.items)
-                    .map((video) => (
-                        <VideoGridCard key={video.id} data={video} />
-                    ))    
-                }
-            </div>
-        ) : (
-            <div className="flex flex-col gap-4">
-                {results.pages
-                    .flatMap((page) => page.items)
-                    .map((video) => (
-                        <VideoRowCard key={video.id} data={video} />
-                    ))    
-                }
-            </div>
-        )}
+        <div className="flex flex-col gap-4 gap-y-10 md:hidden">
+            {results.pages
+                .flatMap((page) => page.items)
+                .map((video) => (
+                    <VideoGridCard key={video.id} data={video} />
+                ))    
+            }
+        </div>
+
+        <div className="hidden flex-col gap-4 md:flex">
+            {results.pages
+                .flatMap((page) => page.items)
+                .map((video) => (
+                    <VideoRowCard key={video.id} data={video} />
+                ))    
+            }
+        </div>
+        
         <InfiniteScroll 
             hasNextPage={resultquery.hasNextPage}
             isFetchingNextPage={resultquery.isFetchingNextPage}
