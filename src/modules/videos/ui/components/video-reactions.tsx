@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator";
 
 import { VideoGetOneOutput } from "../../types";
-import { error } from "console";
 import { toast } from "sonner";
 
 interface VideoReactionsProps {
@@ -29,7 +28,7 @@ export const VideoReactions = ({
     const like = trpc.videoReactions.like.useMutation({
         onSuccess: () => {
             utils.videos.getOne.invalidate({ id: videoId });
-            // TODO: Invalidate "liked" playlist
+            utils.playlists.getLiked.invalidate();
         },
         
         onError: (error) => {
@@ -42,7 +41,7 @@ export const VideoReactions = ({
     const dislike = trpc.videoReactions.dislike.useMutation({
         onSuccess: () => {
             utils.videos.getOne.invalidate({ id: videoId });
-            // TODO: Invalidate "liked" playlist
+            utils.playlists.getLiked.invalidate();
         },
         
         onError: (error) => {
