@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { formatDuration } from "@/lib/utils";
-import { THUNBNAIL_FALLBACK } from "../../constant";
+import { THUMBNAIL_FALLBACK } from "../../constant";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface VideoThumbnailProps {
@@ -29,7 +29,7 @@ export const VideoThumbnail = ({
       {/* Thubmnail wrapper */}
       <div className="relative w-full overflow-hidden rounded-xl aspect-video">
         <Image 
-          src={imageUrl || THUNBNAIL_FALLBACK} 
+          src={imageUrl || THUMBNAIL_FALLBACK} 
           alt={title} 
           fill 
           className="h-full w-full object-cover group-hover:opacity-0" 
@@ -37,7 +37,7 @@ export const VideoThumbnail = ({
 
         <Image
           unoptimized={!!previewUrl} 
-          src={previewUrl || THUNBNAIL_FALLBACK} 
+          src={previewUrl || THUMBNAIL_FALLBACK} 
           alt={title} 
           fill 
           className="h-full w-full object-cover opacity-0 group-hover:opacity-100" 

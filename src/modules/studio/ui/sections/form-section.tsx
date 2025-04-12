@@ -1,15 +1,23 @@
 "use client"
+
 import { z } from 'zod';
-import { Suspense, useState } from "react";
+import Link from 'next/link';
+import Image from 'next/image';
+import { toast } from 'sonner';
 import { useForm } from "react-hook-form";
+import { Suspense, useState } from "react";
+import { useRouter } from 'next/navigation';
 import { ErrorBoundary } from "react-error-boundary";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CopyCheckIcon, CopyIcon, Globe2Icon, ImagePlusIcon, Loader2Icon, LockIcon, MoreVerticalIcon, RotateCcwIcon, SparkleIcon, TrashIcon } from "lucide-react";
 
 import { trpc } from "@/trpc/client";
 import { Input } from "@/components/ui/input";
+import { snakeCaseToTitle } from '@/lib/utils';
 import { Button } from "@/components/ui/button";
+import { videoUpdateSchema } from '@/db/schema';
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
@@ -32,19 +40,12 @@ import {
     SelectValue
 } from "@/components/ui/select";
 
-import Link from 'next/link';
-import { toast } from 'sonner';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-
-import { snakeCaseToTitle } from '@/lib/utils';
-import { videoUpdateSchema } from '@/db/schema';
-import { THUNBNAIL_FALLBACK } from '@/modules/videos/constant';
+import { APP_URL } from '@/constans';
+import { THUMBNAIL_FALLBACK } from '@/modules/videos/constant';
 import { VideoPlayer } from '@/modules/videos/ui/components/video-player';
+
 import { ThumbnailUploadModal } from '../components/thumbnail-upload-modal';
 import { ThumbnailGenerateModal } from '../components/thumbnail-generate-modal';
-import { Skeleton } from '@/components/ui/skeleton';
-import { APP_URL } from '@/constans';
 
 interface FormSectionProps {
     videoId: string;
@@ -347,7 +348,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                                     <FormControl>
                                         <div className="p-0.5 border border-dashed border-neutral-400 relative h-[84px] w-[153px] group">
                                             <Image 
-                                                src={video.thumbnailUrl || THUNBNAIL_FALLBACK}
+                                                src={video.thumbnailUrl || THUMBNAIL_FALLBACK}
                                                 className="object-cover"
                                                 fill
                                                 alt={"Thumnail"}
