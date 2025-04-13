@@ -10,6 +10,51 @@ import { auth } from "@clerk/nextjs/server";
 const f = createUploadthing();
 
 export const ourFileRouter = {
+  bannerUploader: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
+  })
+    .middleware(async () => {
+      const { userId: clerkUserId } = await auth();
+
+      if (!clerkUserId) throw new UploadThingError("Unauthorized");
+
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkId, clerkUserId))
+
+      if(!existingUser) throw new UploadThingError("Unauthorized")
+
+      if(existingUser.bannerKey) {
+        const utapi = new UTApi();
+
+        const response = await utapi.deleteFiles(existingUser.bannerKey);
+        await db
+          .update(users)
+          .set({ bannerKey: null, bannerUrl: null})
+          .where(and(
+            eq(users.id, existingUser.id)
+          ))
+      } else {
+        console.log(" Middleware point - 2")
+      }
+
+      return { userId: existingUser.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      await db
+        .update(users)
+        .set({
+          bannerUrl: file.url,
+          bannerKey: file.key,
+        })
+        .where(eq(users.id, metadata.userId ))
+
+      return { uploadedBy: metadata.userId };
+    }),
   thumbnailUploader: f({
     image: {
       maxFileSize: "4MB",
@@ -41,9 +86,7 @@ export const ourFileRouter = {
           eq(videos.userId, user.id)
         ))         
 
-      if(!existingVideo) {
-        throw new UploadThingError("Not found"); 
-      }
+      if(!existingVideo) throw new UploadThingError("Not found"); 
 
       console.log(" Middleware point - 0", existingVideo);
       if(existingVideo.thumbnailKey) {
