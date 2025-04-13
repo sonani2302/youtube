@@ -1,8 +1,5 @@
 import { HomeLayout } from "@/modules/home/ui/layout/home-layout"
 
-// TODO: confirm this is needed or not
-export const dynamic = 'force-dynamic'
-
 interface LayoutProps {
     children: React.ReactNode
 }
