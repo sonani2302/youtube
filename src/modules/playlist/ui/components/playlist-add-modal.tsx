@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import { ResponsiveModal } from "@/components/responsive-modal";
 import { trpc } from "@/trpc/client";
 import { DEFAULT_LIMIT } from "@/constans";
@@ -56,7 +54,7 @@ export const PlaylistAddModal = ({
             utils.playlists.getOne.invalidate({ id: data.playlistId });
             utils.playlists.getVideos.invalidate({ playlistId: data.playlistId });
         },
-        onError: (data) => {
+        onError: () => {
             toast.error("Something went wrong");
         },
     });

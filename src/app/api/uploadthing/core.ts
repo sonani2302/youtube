@@ -38,6 +38,7 @@ export const ourFileRouter = {
           .where(and(
             eq(users.id, existingUser.id)
           ))
+          console.log(response)
       } else {
         console.log(" Middleware point - 2")
       }

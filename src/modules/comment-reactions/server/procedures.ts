@@ -2,7 +2,7 @@ import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { commentReactions, videoReactions } from "@/db/schema";
+import { commentReactions } from "@/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const commentReactionsRouter = createTRPCRouter({

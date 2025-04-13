@@ -14,7 +14,7 @@ export const useIntersectionObserver = (options?: IntersectionObserverInit) => {
         }
 
         return () => observer.disconnect();
-    }, [])
+    }, [options])
 
     return { targetRef, isIntersecting }
 }

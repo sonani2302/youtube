@@ -36,7 +36,7 @@ export const VideoInfo = ({
 
     const compactDate = useMemo(() => {
         return formatDistanceToNow(data.createdAt, { addSuffix: true });
-    }, [data.viewCount])
+    }, [data.createdAt])
 
     return(<>
         <div className="flex gap-3">

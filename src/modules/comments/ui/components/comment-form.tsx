@@ -48,7 +48,9 @@ export const CommentForm = ({
     });
     
     const form = useForm<z.infer<typeof commentInsertSchema>>({
-        //@ts-ignore
+        
+        // @ts-expect-error: We're omitting `userId` because it is set server-side.
+        // TypeScript doesn't correctly infer the narrowed schema type after `.omit()` in this context.
         resolver: zodResolver(commentInsertSchema.omit({ userId: true })),
         defaultValues: {
             parentId: parentId,

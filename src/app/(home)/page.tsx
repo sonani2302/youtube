@@ -10,7 +10,7 @@ interface pageProps {
   }>
 }
 
-export const Page = async ({searchParams}: pageProps) => {
+const Page = async ({searchParams}: pageProps) => {
   const { categoryId } = await searchParams;
   void trpc.categories.getMany.prefetch();
   void trpc.videos.getMany.prefetch({ categoryId, limit: DEFAULT_LIMIT });

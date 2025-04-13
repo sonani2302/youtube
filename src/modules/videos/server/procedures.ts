@@ -395,6 +395,8 @@ export const videosRouter = createTRPCRouter({
                 ))
                 .returning()
 
+            return updatedVideo;
+
         }),
     restoreThumbnail: protectedProcedure
         .input(z.object({id: z.string().uuid()}))

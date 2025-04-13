@@ -2,7 +2,6 @@ import { DEFAULT_LIMIT } from "@/constans";
 
 import { HydrateClient, trpc } from "@/trpc/server";
 
-import { HistoryView } from "@/modules/playlist/ui/views/history-view";
 import { VideosView } from "@/modules/playlist/ui/views/videos-view";
 
 export const dynamic = "force-dynamic";

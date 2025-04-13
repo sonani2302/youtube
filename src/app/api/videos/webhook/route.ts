@@ -48,7 +48,7 @@ export const POST = async (request: Request) => {
             SIGNIN_SECRET
         );
     } catch (error) {
-        return new Response("Invalid signature", { status: 401 });
+        return new Response(`Invalid signature ${error}`, { status: 401 });
     }
     
     
