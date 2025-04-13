@@ -193,7 +193,7 @@ export const comments = pgTable("comments", {
             foreignColumns: [t.id],
             name: "comments_parent_id_fkey",
         })
-        .onDelete("cascade") //Added this earlier(04.10.00)
+        .onDelete("cascade")
     ]
 });
 
