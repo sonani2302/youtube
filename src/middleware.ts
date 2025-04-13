@@ -2,7 +2,10 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Corrected the function name and syntax
 const isProtectedRoute = createRouteMatcher([
-  "/studio(.*)"
+  "/studio(.*)",
+  "/subscriptions",
+  "/feed/subscribed",
+  "/playlist(.*)"
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
