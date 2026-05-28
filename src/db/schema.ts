@@ -127,6 +127,10 @@ export const videoVisibility = pgEnum("video_visibility", [
     "public"
 ])
 
+export const categoryRelations = relations(categories, ({ many }) => ({
+    videos: many(videos),
+}))
+
 export const videos = pgTable("videos", {
     id: uuid("id").primaryKey().defaultRandom(),
     title: text("title").notNull(),
